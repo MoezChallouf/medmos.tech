@@ -1,0 +1,11 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "devCommand": "npm run dev",
+  "framework": null,
+  "installCommand": "npm install",
+  "rewrites": [
+    { "source": "/api/mes/consult", "destination": "/api/consult" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
