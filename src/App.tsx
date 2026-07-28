@@ -116,6 +116,8 @@ export default function App() {
     "/stitoptima/Screenshot 2026-07-28 142452.png",
     "/stitoptima/Screenshot 2026-07-28 142505.png",
     "/stitoptima/Screenshot 2026-07-28 142524.png",
+    "/stitoptima/Screenshot 2026-07-28 142715.png",
+    "/stitoptima/Screenshot 2026-07-28 142733.png",
   ];
   const [aiQuery, setAiQuery] = useState("");
   const [aiMessages, setAiMessages] = useState<Array<{ role: "user" | "ai"; text: string; thinking?: boolean }>>([
