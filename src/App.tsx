@@ -172,6 +172,25 @@ export default function App() {
       .catch(() => setStandaloneHtmlCode("<!-- Error loading standalone HTML -->"));
   }, []);
 
+  // Deep-link: open gallery from URL hash
+  useEffect(() => {
+    const check = () => {
+      if (window.location.hash === "#stitoptima") setStitOptimaModalOpen(true);
+    };
+    check();
+    window.addEventListener("hashchange", check);
+    return () => window.removeEventListener("hashchange", check);
+  }, []);
+
+  // Sync hash when modal opens/closes
+  useEffect(() => {
+    if (stitOptimaModalOpen) {
+      if (window.location.hash !== "#stitoptima") history.pushState(null, "", "#stitoptima");
+    } else {
+      if (window.location.hash === "#stitoptima") history.pushState(null, "", window.location.pathname + window.location.search);
+    }
+  }, [stitOptimaModalOpen]);
+
   // Lightbox keyboard navigation
   useEffect(() => {
     if (lightboxIndex === null) return;
