@@ -861,6 +861,10 @@ export default function App() {
                 <p className="text-zinc-400 font-mono text-xs uppercase tracking-wider leading-relaxed">
                   Sole engineer scaling factory-floor software from 1 to 4 industrial facilities. Managing entire IT infrastructure and coordinating production data flows. Built custom MES modules replacing paper manufacturing orders, reducing human error by ~90% and generating 500+ daily barcodes and shipping manifests.
                 </p>
+                <button onClick={() => setStitOptimaModalOpen(true)} className="mt-4 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm bg-[#3B82F6]/10 border border-[#3B82F6]/30 text-[#3B82F6] hover:bg-[#3B82F6]/20 hover:text-white font-mono text-[11px] uppercase tracking-widest font-bold transition-all cursor-pointer">
+                  <Eye className="w-3.5 h-3.5" />
+                  <span>View Screenshots ({stitOptimaImages.length})</span>
+                </button>
               </div>
             </div>
 
