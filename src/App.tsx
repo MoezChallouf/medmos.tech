@@ -172,14 +172,9 @@ export default function App() {
       .catch(() => setStandaloneHtmlCode("<!-- Error loading standalone HTML -->"));
   }, []);
 
-  // Deep-link: open gallery from URL path
+  // Deep-link: open gallery from URL path on initial load
   useEffect(() => {
-    const check = () => {
-      if (window.location.pathname === "/stitoptima") setStitOptimaModalOpen(true);
-    };
-    check();
-    window.addEventListener("popstate", check);
-    return () => window.removeEventListener("popstate", check);
+    if (window.location.pathname === "/stitoptima") setStitOptimaModalOpen(true);
   }, []);
 
   // Sync URL path when modal opens/closes
@@ -187,7 +182,7 @@ export default function App() {
     if (stitOptimaModalOpen) {
       if (window.location.pathname !== "/stitoptima") history.pushState(null, "", "/stitoptima");
     } else {
-      if (window.location.pathname === "/stitoptima") history.back();
+      if (window.location.pathname === "/stitoptima") history.replaceState(null, "", "/");
     }
   }, [stitOptimaModalOpen]);
 
