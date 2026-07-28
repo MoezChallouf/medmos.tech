@@ -6,6 +6,7 @@
   "installCommand": "npm install",
   "rewrites": [
     { "source": "/api/mes/consult", "destination": "/api/consult" },
+    { "source": "/stitoptima", "destination": "/index.html" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }

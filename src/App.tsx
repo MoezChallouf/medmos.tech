@@ -172,22 +172,22 @@ export default function App() {
       .catch(() => setStandaloneHtmlCode("<!-- Error loading standalone HTML -->"));
   }, []);
 
-  // Deep-link: open gallery from URL hash
+  // Deep-link: open gallery from URL path
   useEffect(() => {
     const check = () => {
-      if (window.location.hash === "#stitoptima") setStitOptimaModalOpen(true);
+      if (window.location.pathname === "/stitoptima") setStitOptimaModalOpen(true);
     };
     check();
-    window.addEventListener("hashchange", check);
-    return () => window.removeEventListener("hashchange", check);
+    window.addEventListener("popstate", check);
+    return () => window.removeEventListener("popstate", check);
   }, []);
 
-  // Sync hash when modal opens/closes
+  // Sync URL path when modal opens/closes
   useEffect(() => {
     if (stitOptimaModalOpen) {
-      if (window.location.hash !== "#stitoptima") history.pushState(null, "", "#stitoptima");
+      if (window.location.pathname !== "/stitoptima") history.pushState(null, "", "/stitoptima");
     } else {
-      if (window.location.hash === "#stitoptima") history.pushState(null, "", window.location.pathname + window.location.search);
+      if (window.location.pathname === "/stitoptima") history.back();
     }
   }, [stitOptimaModalOpen]);
 
