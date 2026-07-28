@@ -12,6 +12,7 @@ import {
   CheckCircle2,
   ExternalLink,
   Code2,
+  ChevronLeft,
   ChevronRight,
   Download,
   Mail,
@@ -83,6 +84,7 @@ export default function App() {
   // AI MES Consultant State (High Thinking Mode)
   const [aiModalOpen, setAiModalOpen] = useState(false);
   const [stitOptimaModalOpen, setStitOptimaModalOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   const stitOptimaImages = [
     "/stitoptima/Screenshot 2026-07-28 133723.png",
@@ -156,6 +158,22 @@ export default function App() {
       .then((data) => setStandaloneHtmlCode(data))
       .catch(() => setStandaloneHtmlCode("<!-- Error loading standalone HTML -->"));
   }, []);
+
+  // Lightbox keyboard navigation
+  useEffect(() => {
+    if (lightboxIndex === null) return;
+    document.body.style.overflow = "hidden";
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setLightboxIndex(null);
+      else if (e.key === "ArrowRight") setLightboxIndex((i) => (i! + 1) % stitOptimaImages.length);
+      else if (e.key === "ArrowLeft") setLightboxIndex((i) => (i! - 1 + stitOptimaImages.length) % stitOptimaImages.length);
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => {
+      window.removeEventListener("keydown", handleKey);
+      document.body.style.overflow = "";
+    };
+  }, [lightboxIndex, stitOptimaImages.length]);
 
   // 2. PCB Interactive Canvas
   useEffect(() => {
@@ -1110,25 +1128,79 @@ export default function App() {
             </div>
 
             <div className="flex-1 overflow-y-auto p-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="columns-1 sm:columns-2 lg:columns-3 gap-4">
                 {stitOptimaImages.map((src, idx) => (
                   <div
                     key={idx}
-                    className="group relative rounded-sm overflow-hidden border border-white/5 hover:border-[#3B82F6]/50 bg-zinc-950 shadow-xl transition-colors"
+                    className="group relative rounded-sm overflow-hidden border border-white/5 hover:border-[#3B82F6]/50 bg-zinc-950 shadow-xl transition-all duration-300 break-inside-avoid mb-4 cursor-pointer hover:scale-[1.03]"
+                    onClick={() => setLightboxIndex(idx)}
                   >
                     <img
                       src={src}
                       alt={`STIT OPTIMA Screenshot ${idx + 1}`}
-                      className="w-full h-auto object-cover opacity-90 group-hover:opacity-100 transition-opacity"
+                      className="w-full h-auto block opacity-90 group-hover:opacity-100 transition-opacity"
                       loading="lazy"
                     />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
                     <div className="absolute top-2 right-2 px-1.5 py-0.5 rounded-sm bg-black/60 backdrop-blur-sm text-[10px] text-zinc-400 font-mono border border-white/10">
                       {String(idx + 1).padStart(2, "0")}
+                    </div>
+                    <div className="absolute bottom-0 left-0 right-0 p-3 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                      <span className="text-[11px] text-white font-bold uppercase tracking-wider truncate mr-2">Screenshot {String(idx + 1).padStart(2, "0")}</span>
+                      <span className="px-2 py-0.5 rounded-sm bg-[#3B82F6]/20 border border-[#3B82F6]/40 text-[#3B82F6] text-[10px] font-bold uppercase flex-shrink-0">View</span>
                     </div>
                   </div>
                 ))}
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* LIGHTBOX OVERLAY */}
+      {lightboxIndex !== null && (
+        <div className="fixed inset-0 z-[60] bg-black/95 backdrop-blur-lg flex items-center justify-center font-mono select-none">
+          <button
+            onClick={() => setLightboxIndex(null)}
+            className="absolute top-4 right-4 text-neutral-400 hover:text-white z-10 p-2 cursor-pointer"
+          >
+            <X className="w-6 h-6" />
+          </button>
+
+          <div className="absolute top-4 left-1/2 -translate-x-1/2 text-xs text-zinc-500 uppercase tracking-widest z-10 px-3 py-1.5 rounded-sm bg-white/5 border border-white/10 backdrop-blur-sm">
+            {String(lightboxIndex + 1).padStart(2, "0")} / {stitOptimaImages.length}
+          </div>
+
+          <button
+            onClick={() => setLightboxIndex((i) => (i! - 1 + stitOptimaImages.length) % stitOptimaImages.length)}
+            className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-sm bg-white/5 border border-white/10 hover:border-[#3B82F6]/50 hover:bg-[#3B82F6]/10 flex items-center justify-center text-neutral-300 hover:text-white transition-all z-10 cursor-pointer"
+          >
+            <ChevronLeft className="w-6 h-6" />
+          </button>
+
+          <img
+            src={stitOptimaImages[lightboxIndex]}
+            alt={`STIT OPTIMA Screenshot ${lightboxIndex + 1}`}
+            className="max-w-[85vw] max-h-[85vh] object-contain rounded-sm shadow-[0_0_80px_rgba(59,130,246,0.15)]"
+          />
+
+          <button
+            onClick={() => setLightboxIndex((i) => (i! + 1) % stitOptimaImages.length)}
+            className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-sm bg-white/5 border border-white/10 hover:border-[#3B82F6]/50 hover:bg-[#3B82F6]/10 flex items-center justify-center text-neutral-300 hover:text-white transition-all z-10 cursor-pointer"
+          >
+            <ChevronRight className="w-6 h-6" />
+          </button>
+
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 z-10">
+            {stitOptimaImages.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => setLightboxIndex(idx)}
+                className={`w-2 h-2 rounded-full transition-all cursor-pointer ${
+                  idx === lightboxIndex ? "bg-[#3B82F6] w-6" : "bg-white/20 hover:bg-white/40"
+                }`}
+              />
+            ))}
           </div>
         </div>
       )}
