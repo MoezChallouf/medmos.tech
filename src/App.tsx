@@ -82,6 +82,28 @@ export default function App() {
   
   // AI MES Consultant State (High Thinking Mode)
   const [aiModalOpen, setAiModalOpen] = useState(false);
+  const [stitOptimaModalOpen, setStitOptimaModalOpen] = useState(false);
+
+  const stitOptimaImages = [
+    "/stitoptima/Screenshot 2026-07-28 133723.png",
+    "/stitoptima/Screenshot 2026-07-28 133941.png",
+    "/stitoptima/Screenshot 2026-07-28 133957.png",
+    "/stitoptima/Screenshot 2026-07-28 134050.png",
+    "/stitoptima/Screenshot 2026-07-28 134135.png",
+    "/stitoptima/Screenshot 2026-07-28 134212.png",
+    "/stitoptima/Screenshot 2026-07-28 134313.png",
+    "/stitoptima/Screenshot 2026-07-28 134352.png",
+    "/stitoptima/Screenshot 2026-07-28 134411.png",
+    "/stitoptima/Screenshot 2026-07-28 134427.png",
+    "/stitoptima/Screenshot 2026-07-28 134500.png",
+    "/stitoptima/Screenshot 2026-07-28 134513.png",
+    "/stitoptima/Screenshot 2026-07-28 134521.png",
+    "/stitoptima/Screenshot 2026-07-28 134531.png",
+    "/stitoptima/Screenshot 2026-07-28 134540.png",
+    "/stitoptima/Screenshot 2026-07-28 134546.png",
+    "/stitoptima/Screenshot 2026-07-28 134552.png",
+    "/stitoptima/Screenshot 2026-07-28 134600.png",
+  ];
   const [aiQuery, setAiQuery] = useState("");
   const [aiMessages, setAiMessages] = useState<Array<{ role: "user" | "ai"; text: string; thinking?: boolean }>>([
     {
@@ -660,6 +682,10 @@ export default function App() {
                   <span>VIEW LIVE TELEMETRY</span>
                   <ExternalLink className="w-3.5 h-3.5" />
                 </a>
+                <button onClick={() => setStitOptimaModalOpen(true)} className="inline-flex items-center gap-1.5 text-[#3B82F6] hover:text-white transition-colors font-bold cursor-pointer">
+                  <span>VIEW SCREENSHOTS</span>
+                  <Eye className="w-3.5 h-3.5" />
+                </button>
                 <a href="#" className="inline-flex items-center gap-1.5 text-zinc-500 hover:text-white transition-colors font-bold">
                   <span>VIEW CODE</span>
                   <Code2 className="w-3.5 h-3.5" />
@@ -1064,6 +1090,45 @@ export default function App() {
                 <Send className="w-4 h-4" />
               </button>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* STIT OPTIMA SCREENSHOTS GALLERY MODAL */}
+      {stitOptimaModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 font-mono">
+          <div className="bg-zinc-900/90 backdrop-blur-xl border border-[#3B82F6]/50 rounded-sm w-full max-w-6xl h-[90vh] flex flex-col shadow-[0_0_50px_rgba(59,130,246,0.25)] overflow-hidden">
+            <div className="p-4 border-b border-white/10 flex items-center justify-between bg-[#0A0A0B] flex-shrink-0">
+              <div className="flex items-center gap-2">
+                <Eye className="w-5 h-5 text-[#3B82F6]" />
+                <span className="text-xs font-bold text-white uppercase tracking-wider">STIT OPTIMA // SYSTEM SCREENSHOTS</span>
+                <span className="ml-2 px-2 py-0.5 rounded-sm bg-[#3B82F6]/10 border border-[#3B82F6]/30 text-[#3B82F6] text-[10px]">{stitOptimaImages.length} IMAGES</span>
+              </div>
+              <button onClick={() => setStitOptimaModalOpen(false)} className="text-neutral-400 hover:text-white cursor-pointer">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {stitOptimaImages.map((src, idx) => (
+                  <div
+                    key={idx}
+                    className="group relative rounded-sm overflow-hidden border border-white/5 hover:border-[#3B82F6]/50 bg-zinc-950 shadow-xl transition-colors"
+                  >
+                    <img
+                      src={src}
+                      alt={`STIT OPTIMA Screenshot ${idx + 1}`}
+                      className="w-full h-auto object-cover opacity-90 group-hover:opacity-100 transition-opacity"
+                      loading="lazy"
+                    />
+                    <div className="absolute top-2 right-2 px-1.5 py-0.5 rounded-sm bg-black/60 backdrop-blur-sm text-[10px] text-zinc-400 font-mono border border-white/10">
+                      {String(idx + 1).padStart(2, "0")}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       )}
