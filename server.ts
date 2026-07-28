@@ -69,6 +69,11 @@ When answering questions from CTOs, plant managers, recruiters, or fellow engine
       appType: "spa",
     });
     app.use(vite.middlewares);
+
+    // SPA fallback for client-side routes like /stitoptima
+    app.get("*all", (req, res) => {
+      res.type("html").sendFile(path.resolve("index.html"));
+    });
   } else {
     const distPath = path.join(process.cwd(), "dist");
     app.use(express.static(distPath));
