@@ -84,7 +84,11 @@ export default function App() {
   // AI MES Consultant State (High Thinking Mode)
   const [aiModalOpen, setAiModalOpen] = useState(false);
   const [stitOptimaModalOpen, setStitOptimaModalOpen] = useState(false);
+  const [stitProModalOpen, setStitProModalOpen] = useState(false);
+  const [ecommerzaModalOpen, setEcommerzaModalOpen] = useState(false);
+  const [cashFlowModalOpen, setCashFlowModalOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const [lightboxImages, setLightboxImages] = useState<string[]>([]);
 
   const stitOptimaImages = [
     "/stitoptima/Screenshot 2026-07-28 133723.png",
@@ -119,6 +123,40 @@ export default function App() {
     "/stitoptima/Screenshot 2026-07-28 142715.png",
     "/stitoptima/Screenshot 2026-07-28 142733.png",
   ];
+
+  const stitProImages = [
+    "/stitpro/Screenshot 2026-07-30 102053.png",
+    "/stitpro/Screenshot 2026-07-30 102118.png",
+    "/stitpro/Screenshot 2026-07-30 102233.png",
+    "/stitpro/Screenshot 2026-07-30 102253.png",
+    "/stitpro/Screenshot 2026-07-30 102304.png",
+    "/stitpro/Screenshot 2026-07-30 102345.png",
+    "/stitpro/Screenshot 2026-07-30 102411.png",
+    "/stitpro/Screenshot 2026-07-30 102425.png",
+    "/stitpro/Screenshot 2026-07-30 102444.png",
+    "/stitpro/Screenshot 2026-07-30 102458.png",
+    "/stitpro/Screenshot 2026-07-30 102510.png",
+    "/stitpro/Screenshot 2026-07-30 102529.png",
+    "/stitpro/Screenshot 2026-07-30 102546.png",
+    "/stitpro/Screenshot 2026-07-30 102604.png",
+    "/stitpro/Screenshot 2026-07-30 102615.png",
+  ];
+
+  const ecommerzaImages = [
+    "/ecommerza/Screenshot 2026-07-30 101645.png",
+    "/ecommerza/Screenshot 2026-07-30 101701.png",
+    "/ecommerza/Screenshot 2026-07-30 101713.png",
+    "/ecommerza/Screenshot 2026-07-30 101721.png",
+    "/ecommerza/Screenshot 2026-07-30 101741.png",
+    "/ecommerza/Screenshot 2026-07-30 101753.png",
+    "/ecommerza/Screenshot 2026-07-30 101808.png",
+    "/ecommerza/Screenshot 2026-07-30 101820.png",
+    "/ecommerza/Screenshot 2026-07-30 101836.png",
+    "/ecommerza/Screenshot 2026-07-30 101849.png",
+    "/ecommerza/Screenshot 2026-07-30 101901.png",
+    "/ecommerza/Screenshot 2026-07-30 101919.png",
+  ];
+
   const [aiQuery, setAiQuery] = useState("");
   const [aiMessages, setAiMessages] = useState<Array<{ role: "user" | "ai"; text: string; thinking?: boolean }>>([
     {
@@ -172,19 +210,25 @@ export default function App() {
       .catch(() => setStandaloneHtmlCode("<!-- Error loading standalone HTML -->"));
   }, []);
 
-  // Deep-link: open gallery from URL path on initial load
+  // Deep-link: open modals from URL paths on initial load
   useEffect(() => {
-    if (window.location.pathname === "/stitoptima") setStitOptimaModalOpen(true);
+    const path = window.location.pathname;
+    if (path === "/stitoptima") setStitOptimaModalOpen(true);
+    else if (path === "/stitpro") setStitProModalOpen(true);
+    else if (path === "/ecommerza") setEcommerzaModalOpen(true);
+    else if (path === "/cashflow") setCashFlowModalOpen(true);
   }, []);
 
-  // Sync URL path when modal opens/closes
+  // Sync URL paths when modals open/close
   useEffect(() => {
-    if (stitOptimaModalOpen) {
-      if (window.location.pathname !== "/stitoptima") history.pushState(null, "", "/stitoptima");
-    } else {
-      if (window.location.pathname === "/stitoptima") history.replaceState(null, "", "/");
+    if (stitOptimaModalOpen) { if (window.location.pathname !== "/stitoptima") history.pushState(null, "", "/stitoptima"); }
+    else if (stitProModalOpen) { if (window.location.pathname !== "/stitpro") history.pushState(null, "", "/stitpro"); }
+    else if (ecommerzaModalOpen) { if (window.location.pathname !== "/ecommerza") history.pushState(null, "", "/ecommerza"); }
+    else if (cashFlowModalOpen) { if (window.location.pathname !== "/cashflow") history.pushState(null, "", "/cashflow"); }
+    else {
+      if (["/stitoptima","/stitpro","/ecommerza","/cashflow"].includes(window.location.pathname)) history.replaceState(null, "", "/");
     }
-  }, [stitOptimaModalOpen]);
+  }, [stitOptimaModalOpen, stitProModalOpen, ecommerzaModalOpen, cashFlowModalOpen]);
 
   // Lightbox keyboard navigation
   useEffect(() => {
@@ -192,15 +236,15 @@ export default function App() {
     document.body.style.overflow = "hidden";
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setLightboxIndex(null);
-      else if (e.key === "ArrowRight") setLightboxIndex((i) => (i! + 1) % stitOptimaImages.length);
-      else if (e.key === "ArrowLeft") setLightboxIndex((i) => (i! - 1 + stitOptimaImages.length) % stitOptimaImages.length);
+      else if (e.key === "ArrowRight") setLightboxIndex((i) => (i! + 1) % lightboxImages.length);
+      else if (e.key === "ArrowLeft") setLightboxIndex((i) => (i! - 1 + lightboxImages.length) % lightboxImages.length);
     };
     window.addEventListener("keydown", handleKey);
     return () => {
       window.removeEventListener("keydown", handleKey);
       document.body.style.overflow = "";
     };
-  }, [lightboxIndex, stitOptimaImages.length]);
+  }, [lightboxIndex, lightboxImages.length]);
 
   // 2. PCB Interactive Canvas
   useEffect(() => {
@@ -690,7 +734,7 @@ export default function App() {
               <h2 className="text-3xl sm:text-5xl font-black font-sans tracking-tight text-white">System Architecture &amp; Deployments</h2>
             </div>
             <div className="font-mono text-[11px] text-zinc-500 mt-4 md:mt-0 uppercase tracking-widest flex items-center gap-2">
-              <span>DOCUMENT CHAIN NODES: <strong className="text-white font-bold">04 ACTIVE</strong></span>
+              <span>DOCUMENT CHAIN NODES: <strong className="text-white font-bold">05 ACTIVE</strong></span>
             </div>
           </div>
 
@@ -698,37 +742,37 @@ export default function App() {
       {/* Card 1: STIT OPTIMA */}
             <div className="bg-zinc-900/40 backdrop-blur-md border border-white/5 hover:border-[#3B82F6]/40 p-7 rounded-sm flex flex-col justify-between relative group overflow-hidden shadow-2xl transition-all duration-300">
               <div className="absolute top-0 right-0 w-32 h-32 bg-[#3B82F6]/10 rounded-full blur-2xl group-hover:bg-[#3B82F6]/20 transition-all"></div>
-              
               <div>
                 <div className="flex items-center justify-between font-mono text-[11px] uppercase tracking-widest text-zinc-400 mb-4 border-b border-white/5 pb-3">
                   <span className="flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-[#3B82F6] shadow-[0_0_8px_#3B82F6]"></span>
                     <span className="text-white font-bold">STIT OPTIMA</span>
                   </span>
-                  <span className="text-[#3B82F6] font-bold">DEPLOYED // 2 FACTORIES</span>
+                  <span className="text-[#3B82F6] font-bold">DÉVELOPPEUR & ARCHITECTE UNIQUE</span>
                 </div>
-
-                <h3 className="text-2xl font-black font-sans text-white tracking-tight mb-3 group-hover:text-[#3B82F6] transition-colors">Core Enterprise ERP &amp; MES Platform</h3>
+                <h3 className="text-2xl font-black font-sans text-white tracking-tight mb-3 group-hover:text-[#3B82F6] transition-colors">ERP Manufacturing d'Entreprise</h3>
                 <p className="text-zinc-400 font-mono text-xs uppercase tracking-wider leading-relaxed mb-6">
-                  Custom-built enterprise resource planning and manufacturing execution system. Manages 8 distinct operational modules with 127+ Eloquent models, bridging real-time shop-floor tracking with executive planning.
+                  ERP d'entreprise gérant production, stocks, maintenance, RH & paie, entrepôt, logistique, contrôle qualité et opérations de fabrication. Plus de 120 modèles Eloquent, 150 migrations et une architecture modulaire supportant plusieurs sites de production.
                 </p>
-
-                <div className="flex flex-wrap gap-2 mb-8">
-                  {["Laravel 10", "PHP 8.1", "Filament 3", "Livewire 3", "MySQL", "DomPDF"].map((item, i) => (
+                <ul className="space-y-1 mb-6">
+                  {["ERP d'entreprise gérant 8 modules opérationnels","120+ modèles Eloquent, 150+ migrations","Architecture modulaire multi-sites"].map((item, i) => (
+                    <li key={i} className="flex items-start gap-2 text-zinc-400 font-mono text-[10px] uppercase tracking-wider">
+                      <span className="text-[#3B82F6] mt-0.5">▸</span>
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {["Laravel", "Filament", "Livewire", "MySQL"].map((item, i) => (
                     <span key={i} className="px-2 py-0.5 rounded-sm bg-white/5 border border-white/5 font-mono text-[10px] text-zinc-400 uppercase tracking-wider">
                       {item}
                     </span>
                   ))}
                 </div>
               </div>
-
               <div className="flex items-center justify-between border-t border-white/5 pt-4 font-mono text-[11px] uppercase tracking-widest">
-                <a href="#" className="inline-flex items-center gap-1.5 text-[#3B82F6] hover:text-white transition-colors font-bold">
-                  <span>VIEW LIVE TELEMETRY</span>
-                  <ExternalLink className="w-3.5 h-3.5" />
-                </a>
                 <button onClick={() => setStitOptimaModalOpen(true)} className="inline-flex items-center gap-1.5 text-[#3B82F6] hover:text-white transition-colors font-bold cursor-pointer">
-                  <span>VIEW SCREENSHOTS</span>
+                  <span>APERÇU</span>
                   <Eye className="w-3.5 h-3.5" />
                 </button>
                 <a href="#" className="inline-flex items-center gap-1.5 text-zinc-500 hover:text-white transition-colors font-bold">
@@ -740,35 +784,39 @@ export default function App() {
       {/* Card 2: STIT PRO */}
             <div className="bg-zinc-900/40 backdrop-blur-md border border-white/5 hover:border-[#F59E0B]/40 p-7 rounded-sm flex flex-col justify-between relative group overflow-hidden shadow-2xl transition-all duration-300">
               <div className="absolute top-0 right-0 w-32 h-32 bg-[#F59E0B]/10 rounded-full blur-2xl group-hover:bg-[#F59E0B]/20 transition-all"></div>
-              
               <div>
                 <div className="flex items-center justify-between font-mono text-[11px] uppercase tracking-widest text-zinc-400 mb-4 border-b border-white/5 pb-3">
                   <span className="flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-[#F59E0B] shadow-[0_0_8px_#F59E0B]"></span>
                     <span className="text-white font-bold">STIT PRO</span>
                   </span>
-                  <span className="text-[#F59E0B] font-bold">AI VISION // 2,000+ SCANS/DAY</span>
+                  <span className="text-[#F59E0B] font-bold">DÉVELOPPEUR & ARCHITECTE UNIQUE</span>
                 </div>
-
-                <h3 className="text-2xl font-black font-sans text-white tracking-tight mb-3 group-hover:text-[#F59E0B] transition-colors">AI-Powered Barcode &amp; Inventory Recognition</h3>
+                <h3 className="text-2xl font-black font-sans text-white tracking-tight mb-3 group-hover:text-[#F59E0B] transition-colors">Système MES Assisté par IA</h3>
                 <p className="text-zinc-400 font-mono text-xs uppercase tracking-wider leading-relaxed mb-6">
-                  Next-generation MES module powered by AI multimodal vision. Automates factory warehouse receiving, QR tracking, and defect identification with real-time hardware scanning integrations.
+                  Système MES nouvelle génération avec vision IA multimodale. Automatise la réception en entrepôt, le suivi QR et l'identification des défauts avec intégration matérielle de scan en temps réel.
                 </p>
-
-                <div className="flex flex-wrap gap-2 mb-8">
-                  {["Laravel 12", "Filament 5", "Groq API", "Llama 3.2 90B Vision"].map((item, i) => (
+                <ul className="space-y-1 mb-6">
+                  {["Reconnaissance d'inventaire assistée par IA (Llama 3.2 Vision)","Scan de codes-barres en temps réel","Gestion des expéditions avec historique d'audit","Tableaux de bord de production, génération intelligente de PDF","Sécurité basée sur les rôles et journalisation d'audit"].map((item, i) => (
+                    <li key={i} className="flex items-start gap-2 text-zinc-400 font-mono text-[10px] uppercase tracking-wider">
+                      <span className="text-[#F59E0B] mt-0.5">▸</span>
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {["Laravel 12", "Filament", "Livewire", "MySQL", "API Groq", "Vision IA"].map((item, i) => (
                     <span key={i} className="px-2 py-0.5 rounded-sm bg-white/5 border border-white/5 font-mono text-[10px] text-zinc-400 uppercase tracking-wider">
                       {item}
                     </span>
                   ))}
                 </div>
               </div>
-
               <div className="flex items-center justify-between border-t border-white/5 pt-4 font-mono text-[11px] uppercase tracking-widest">
-                <a href="#" className="inline-flex items-center gap-1.5 text-[#F59E0B] hover:text-white transition-colors font-bold">
-                  <span>VIEW LIVE TELEMETRY</span>
-                  <ExternalLink className="w-3.5 h-3.5" />
-                </a>
+                <button onClick={() => setStitProModalOpen(true)} className="inline-flex items-center gap-1.5 text-[#F59E0B] hover:text-white transition-colors font-bold cursor-pointer">
+                  <span>APERÇU</span>
+                  <Eye className="w-3.5 h-3.5" />
+                </button>
                 <a href="#" className="inline-flex items-center gap-1.5 text-zinc-500 hover:text-white transition-colors font-bold">
                   <span>VIEW CODE</span>
                   <Code2 className="w-3.5 h-3.5" />
@@ -781,28 +829,33 @@ export default function App() {
                 <div className="flex items-center justify-between font-mono text-[11px] uppercase tracking-widest text-zinc-400 mb-4 border-b border-white/5 pb-3">
                   <span className="flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-[#3B82F6]"></span>
-                    <span className="text-white font-bold">SMARTDOORS TUNISIA</span>
+                    <span className="text-white font-bold">SMARTDOORS TUNISIE</span>
                   </span>
-                  <span className="text-zinc-400 font-bold">MULTI-LINGUAL E-COMMERCE</span>
+                  <span className="text-zinc-400 font-bold">DÉVELOPPEUR UNIQUE</span>
                 </div>
-
-                <h3 className="text-2xl font-black font-sans text-white tracking-tight mb-3 group-hover:text-[#3B82F6] transition-colors">Modern Tri-lingual Industrial Showroom</h3>
+                <h3 className="text-2xl font-black font-sans text-white tracking-tight mb-3 group-hover:text-[#3B82F6] transition-colors">Plateforme Corporative Multilingue</h3>
                 <p className="text-zinc-400 font-mono text-xs uppercase tracking-wider leading-relaxed mb-6">
-                  High-performance web portal built with React 19 and Tailwind CSS v4. Features full multi-language localization (FR / AR / EN), interactive architectural door visualizers, and strict SEO optimization.
+                  Conception et développement d'une plateforme corporate multilingue : architecture SEO-first, gestion des produits, intégration CMS, données structurées, optimisation des performances et workflows de génération de leads.
                 </p>
-
-                <div className="flex flex-wrap gap-2 mb-8">
-                  {["React 19", "TypeScript", "Tailwind CSS v4", "Supabase", "Framer Motion"].map((item, i) => (
+                <ul className="space-y-1 mb-6">
+                  {["Architecture SEO-first, multilingue (FR/AR/EN)","Gestion des produits, intégration CMS","Optimisation des performances et génération de leads"].map((item, i) => (
+                    <li key={i} className="flex items-start gap-2 text-zinc-400 font-mono text-[10px] uppercase tracking-wider">
+                      <span className="text-[#3B82F6] mt-0.5">▸</span>
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {["React", "TypeScript", "Tailwind CSS", "Supabase"].map((item, i) => (
                     <span key={i} className="px-2 py-0.5 rounded-sm bg-white/5 border border-white/5 font-mono text-[10px] text-zinc-400 uppercase tracking-wider">
                       {item}
                     </span>
                   ))}
                 </div>
               </div>
-
               <div className="flex items-center justify-between border-t border-white/5 pt-4 font-mono text-[11px] uppercase tracking-widest">
-                <a href="#" className="inline-flex items-center gap-1.5 text-[#3B82F6] hover:text-white transition-colors font-bold">
-                  <span>VIEW LIVE PORTAL</span>
+                <a href="https://smartdoortn.com" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-[#3B82F6] hover:text-white transition-colors font-bold">
+                  <span>VISITER LE SITE</span>
                   <ExternalLink className="w-3.5 h-3.5" />
                 </a>
                 <a href="#" className="inline-flex items-center gap-1.5 text-zinc-500 hover:text-white transition-colors font-bold">
@@ -811,36 +864,84 @@ export default function App() {
                 </a>
               </div>
             </div>
-      {/* Card 4: Cash Flow Tracker */}
+      {/* Card 4: Commerza ERP */}
             <div className="bg-zinc-900/40 backdrop-blur-md border border-white/5 hover:border-[#10B981]/40 p-7 rounded-sm flex flex-col justify-between relative group overflow-hidden shadow-2xl transition-all duration-300">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-[#10B981]/10 rounded-full blur-2xl group-hover:bg-[#10B981]/20 transition-all"></div>
               <div>
                 <div className="flex items-center justify-between font-mono text-[11px] uppercase tracking-widest text-zinc-400 mb-4 border-b border-white/5 pb-3">
                   <span className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-[#10B981]"></span>
-                    <span className="text-white font-bold">CASH FLOW TRACKER</span>
+                    <span className="w-2 h-2 rounded-full bg-[#10B981] shadow-[0_0_8px_#10B981]"></span>
+                    <span className="text-white font-bold">COMMERZA ERP</span>
                   </span>
-                  <span className="text-[#10B981] font-bold">TREASURY BOT ALERTING</span>
+                  <span className="text-[#10B981] font-bold">DÉVELOPPEUR & ARCHITECTE UNIQUE</span>
                 </div>
-
-                <h3 className="text-2xl font-black font-sans text-white tracking-tight mb-3 group-hover:text-[#10B981] transition-colors">Automated Treasury &amp; Bot Alerting Platform</h3>
+                <h3 className="text-2xl font-black font-sans text-white tracking-tight mb-3 group-hover:text-[#10B981] transition-colors">E-commerce & Logistique</h3>
                 <p className="text-zinc-400 font-mono text-xs uppercase tracking-wider leading-relaxed mb-6">
-                  Automated personal finance and liquidity management system. Connects backend ledger calculations directly to Telegram bots for instant low-threshold warnings and daily cash flow digests.
+                  Plateforme e-commerce et logistique complète avec gestion des commandes, produits, stocks et documents commerciaux.
                 </p>
-
-                <div className="flex flex-wrap gap-2 mb-8">
-                  {["Laravel", "Telegram Bot API", "Queue Workers", "Cron Automation"].map((item, i) => (
+                <ul className="space-y-1 mb-6">
+                  {["Gestion des commandes, produits, stocks et documents","Intégration API transporteurs et suivi des colis en temps réel","Tableaux de bord analytiques (CA, profit, ROAS, CPA) et reporting"].map((item, i) => (
+                    <li key={i} className="flex items-start gap-2 text-zinc-400 font-mono text-[10px] uppercase tracking-wider">
+                      <span className="text-[#10B981] mt-0.5">▸</span>
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {["React", "TypeScript", "Laravel 12 API", "MySQL", "Tailwind CSS", "REST API"].map((item, i) => (
                     <span key={i} className="px-2 py-0.5 rounded-sm bg-white/5 border border-white/5 font-mono text-[10px] text-zinc-400 uppercase tracking-wider">
                       {item}
                     </span>
                   ))}
                 </div>
               </div>
-
               <div className="flex items-center justify-between border-t border-white/5 pt-4 font-mono text-[11px] uppercase tracking-widest">
-                <a href="#" className="inline-flex items-center gap-1.5 text-[#10B981] hover:text-white transition-colors font-bold">
-                  <span>VIEW LIVE BOT</span>
-                  <ExternalLink className="w-3.5 h-3.5" />
+                <button onClick={() => setEcommerzaModalOpen(true)} className="inline-flex items-center gap-1.5 text-[#10B981] hover:text-white transition-colors font-bold cursor-pointer">
+                  <span>APERÇU</span>
+                  <Eye className="w-3.5 h-3.5" />
+                </button>
+                <a href="#" className="inline-flex items-center gap-1.5 text-zinc-500 hover:text-white transition-colors font-bold">
+                  <span>VIEW CODE</span>
+                  <Code2 className="w-3.5 h-3.5" />
                 </a>
+              </div>
+            </div>
+      {/* Card 5: Cash Flow Tracker */}
+            <div className="bg-zinc-900/40 backdrop-blur-md border border-white/5 hover:border-[#8B5CF6]/40 p-7 rounded-sm flex flex-col justify-between relative group overflow-hidden shadow-2xl transition-all duration-300">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-[#8B5CF6]/10 rounded-full blur-2xl group-hover:bg-[#8B5CF6]/20 transition-all"></div>
+              <div>
+                <div className="flex items-center justify-between font-mono text-[11px] uppercase tracking-widest text-zinc-400 mb-4 border-b border-white/5 pb-3">
+                  <span className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-[#8B5CF6] shadow-[0_0_8px_#8B5CF6]"></span>
+                    <span className="text-white font-bold">CASH FLOW TRACKER</span>
+                  </span>
+                  <span className="text-[#8B5CF6] font-bold">DÉVELOPPEUR UNIQUE</span>
+                </div>
+                <h3 className="text-2xl font-black font-sans text-white tracking-tight mb-3 group-hover:text-[#8B5CF6] transition-colors">Gestion Financière & Trésorerie</h3>
+                <p className="text-zinc-400 font-mono text-xs uppercase tracking-wider leading-relaxed mb-6">
+                  Application de gestion financière personnelle avec notifications automatisées, suivi de trésorerie et tableaux de bord financiers.
+                </p>
+                <ul className="space-y-1 mb-6">
+                  {["Notifications automatisées via Telegram Bot","Suivi de trésorerie en temps réel","Tableaux de bord financiers"].map((item, i) => (
+                    <li key={i} className="flex items-start gap-2 text-zinc-400 font-mono text-[10px] uppercase tracking-wider">
+                      <span className="text-[#8B5CF6] mt-0.5">▸</span>
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {["Laravel", "Telegram Bot API"].map((item, i) => (
+                    <span key={i} className="px-2 py-0.5 rounded-sm bg-white/5 border border-white/5 font-mono text-[10px] text-zinc-400 uppercase tracking-wider">
+                      {item}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <div className="flex items-center justify-between border-t border-white/5 pt-4 font-mono text-[11px] uppercase tracking-widest">
+                <button onClick={() => setCashFlowModalOpen(true)} className="inline-flex items-center gap-1.5 text-[#8B5CF6] hover:text-white transition-colors font-bold cursor-pointer">
+                  <span>APERÇU</span>
+                  <Eye className="w-3.5 h-3.5" />
+                </button>
                 <a href="#" className="inline-flex items-center gap-1.5 text-zinc-500 hover:text-white transition-colors font-bold">
                   <span>VIEW CODE</span>
                   <Code2 className="w-3.5 h-3.5" />
@@ -1143,39 +1244,26 @@ export default function App() {
         </div>
       )}
 
-      {/* STIT OPTIMA SCREENSHOTS GALLERY MODAL */}
+      {/* STIT OPTIMA GALLERY */}
       {stitOptimaModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 font-mono">
           <div className="bg-zinc-900/90 backdrop-blur-xl border border-[#3B82F6]/50 rounded-sm w-full max-w-6xl h-[90vh] flex flex-col shadow-[0_0_50px_rgba(59,130,246,0.25)] overflow-hidden">
             <div className="p-4 border-b border-white/10 flex items-center justify-between bg-[#0A0A0B] flex-shrink-0">
               <div className="flex items-center gap-2">
                 <Eye className="w-5 h-5 text-[#3B82F6]" />
-                <span className="text-xs font-bold text-white uppercase tracking-wider">STIT OPTIMA // SYSTEM SCREENSHOTS</span>
+                <span className="text-xs font-bold text-white uppercase tracking-wider">STIT OPTIMA // ERP MANUFACTURING</span>
                 <span className="ml-2 px-2 py-0.5 rounded-sm bg-[#3B82F6]/10 border border-[#3B82F6]/30 text-[#3B82F6] text-[10px]">{stitOptimaImages.length} IMAGES</span>
               </div>
-              <button onClick={() => setStitOptimaModalOpen(false)} className="text-neutral-400 hover:text-white cursor-pointer">
-                <X className="w-5 h-5" />
-              </button>
+              <button onClick={() => setStitOptimaModalOpen(false)} className="text-neutral-400 hover:text-white cursor-pointer"><X className="w-5 h-5" /></button>
             </div>
-
             <div className="flex-1 overflow-y-auto p-6">
               <div className="columns-1 sm:columns-2 lg:columns-3 gap-4">
                 {stitOptimaImages.map((src, idx) => (
-                  <div
-                    key={idx}
-                    className="group relative rounded-sm overflow-hidden border border-white/5 hover:border-[#3B82F6]/50 bg-zinc-950 shadow-xl transition-all duration-300 break-inside-avoid mb-4 cursor-pointer hover:scale-[1.03]"
-                    onClick={() => setLightboxIndex(idx)}
-                  >
-                    <img
-                      src={src}
-                      alt={`STIT OPTIMA Screenshot ${idx + 1}`}
-                      className="w-full h-auto block opacity-90 group-hover:opacity-100 transition-opacity"
-                      loading="lazy"
-                    />
+                  <div key={idx} className="group relative rounded-sm overflow-hidden border border-white/5 hover:border-[#3B82F6]/50 bg-zinc-950 shadow-xl transition-all duration-300 break-inside-avoid mb-4 cursor-pointer hover:scale-[1.03]"
+                    onClick={() => { setLightboxImages(stitOptimaImages); setLightboxIndex(idx); }}>
+                    <img src={src} alt={`STIT OPTIMA ${idx + 1}`} className="w-full h-auto block opacity-90 group-hover:opacity-100 transition-opacity" loading="lazy" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-                    <div className="absolute top-2 right-2 px-1.5 py-0.5 rounded-sm bg-black/60 backdrop-blur-sm text-[10px] text-zinc-400 font-mono border border-white/10">
-                      {String(idx + 1).padStart(2, "0")}
-                    </div>
+                    <div className="absolute top-2 right-2 px-1.5 py-0.5 rounded-sm bg-black/60 backdrop-blur-sm text-[10px] text-zinc-400 font-mono border border-white/10">{String(idx + 1).padStart(2, "0")}</div>
                     <div className="absolute bottom-0 left-0 right-0 p-3 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
                       <span className="text-[11px] text-white font-bold uppercase tracking-wider truncate mr-2">Screenshot {String(idx + 1).padStart(2, "0")}</span>
                       <span className="px-2 py-0.5 rounded-sm bg-[#3B82F6]/20 border border-[#3B82F6]/40 text-[#3B82F6] text-[10px] font-bold uppercase flex-shrink-0">View</span>
@@ -1188,49 +1276,112 @@ export default function App() {
         </div>
       )}
 
+      {/* STIT PRO GALLERY */}
+      {stitProModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 font-mono">
+          <div className="bg-zinc-900/90 backdrop-blur-xl border border-[#F59E0B]/50 rounded-sm w-full max-w-6xl h-[90vh] flex flex-col shadow-[0_0_50px_rgba(245,158,11,0.25)] overflow-hidden">
+            <div className="p-4 border-b border-white/10 flex items-center justify-between bg-[#0A0A0B] flex-shrink-0">
+              <div className="flex items-center gap-2">
+                <Eye className="w-5 h-5 text-[#F59E0B]" />
+                <span className="text-xs font-bold text-white uppercase tracking-wider">STIT PRO // MES ASSISTÉ PAR IA</span>
+                <span className="ml-2 px-2 py-0.5 rounded-sm bg-[#F59E0B]/10 border border-[#F59E0B]/30 text-[#F59E0B] text-[10px]">{stitProImages.length} IMAGES</span>
+              </div>
+              <button onClick={() => setStitProModalOpen(false)} className="text-neutral-400 hover:text-white cursor-pointer"><X className="w-5 h-5" /></button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-6">
+              <div className="columns-1 sm:columns-2 lg:columns-3 gap-4">
+                {stitProImages.map((src, idx) => (
+                  <div key={idx} className="group relative rounded-sm overflow-hidden border border-white/5 hover:border-[#F59E0B]/50 bg-zinc-950 shadow-xl transition-all duration-300 break-inside-avoid mb-4 cursor-pointer hover:scale-[1.03]"
+                    onClick={() => { setLightboxImages(stitProImages); setLightboxIndex(idx); }}>
+                    <img src={src} alt={`STIT PRO ${idx + 1}`} className="w-full h-auto block opacity-90 group-hover:opacity-100 transition-opacity" loading="lazy" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                    <div className="absolute top-2 right-2 px-1.5 py-0.5 rounded-sm bg-black/60 backdrop-blur-sm text-[10px] text-zinc-400 font-mono border border-white/10">{String(idx + 1).padStart(2, "0")}</div>
+                    <div className="absolute bottom-0 left-0 right-0 p-3 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                      <span className="text-[11px] text-white font-bold uppercase tracking-wider truncate mr-2">Screenshot {String(idx + 1).padStart(2, "0")}</span>
+                      <span className="px-2 py-0.5 rounded-sm bg-[#F59E0B]/20 border border-[#F59E0B]/40 text-[#F59E0B] text-[10px] font-bold uppercase flex-shrink-0">View</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* COMMERZA ERP GALLERY */}
+      {ecommerzaModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 font-mono">
+          <div className="bg-zinc-900/90 backdrop-blur-xl border border-[#10B981]/50 rounded-sm w-full max-w-6xl h-[90vh] flex flex-col shadow-[0_0_50px_rgba(16,185,129,0.25)] overflow-hidden">
+            <div className="p-4 border-b border-white/10 flex items-center justify-between bg-[#0A0A0B] flex-shrink-0">
+              <div className="flex items-center gap-2">
+                <Eye className="w-5 h-5 text-[#10B981]" />
+                <span className="text-xs font-bold text-white uppercase tracking-wider">COMMERZA ERP // E-COMMERCE & LOGISTIQUE</span>
+                <span className="ml-2 px-2 py-0.5 rounded-sm bg-[#10B981]/10 border border-[#10B981]/30 text-[#10B981] text-[10px]">{ecommerzaImages.length} IMAGES</span>
+              </div>
+              <button onClick={() => setEcommerzaModalOpen(false)} className="text-neutral-400 hover:text-white cursor-pointer"><X className="w-5 h-5" /></button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-6">
+              <div className="columns-1 sm:columns-2 lg:columns-3 gap-4">
+                {ecommerzaImages.map((src, idx) => (
+                  <div key={idx} className="group relative rounded-sm overflow-hidden border border-white/5 hover:border-[#10B981]/50 bg-zinc-950 shadow-xl transition-all duration-300 break-inside-avoid mb-4 cursor-pointer hover:scale-[1.03]"
+                    onClick={() => { setLightboxImages(ecommerzaImages); setLightboxIndex(idx); }}>
+                    <img src={src} alt={`COMMERZA ${idx + 1}`} className="w-full h-auto block opacity-90 group-hover:opacity-100 transition-opacity" loading="lazy" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                    <div className="absolute top-2 right-2 px-1.5 py-0.5 rounded-sm bg-black/60 backdrop-blur-sm text-[10px] text-zinc-400 font-mono border border-white/10">{String(idx + 1).padStart(2, "0")}</div>
+                    <div className="absolute bottom-0 left-0 right-0 p-3 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                      <span className="text-[11px] text-white font-bold uppercase tracking-wider truncate mr-2">Screenshot {String(idx + 1).padStart(2, "0")}</span>
+                      <span className="px-2 py-0.5 rounded-sm bg-[#10B981]/20 border border-[#10B981]/40 text-[#10B981] text-[10px] font-bold uppercase flex-shrink-0">View</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* CASH FLOW PLACEHOLDER MODAL */}
+      {cashFlowModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 font-mono">
+          <div className="bg-zinc-900/90 backdrop-blur-xl border border-[#8B5CF6]/50 rounded-sm w-full max-w-lg shadow-[0_0_50px_rgba(139,92,246,0.25)] overflow-hidden">
+            <div className="p-4 border-b border-white/10 flex items-center justify-between bg-[#0A0A0B]">
+              <div className="flex items-center gap-2">
+                <Eye className="w-5 h-5 text-[#8B5CF6]" />
+                <span className="text-xs font-bold text-white uppercase tracking-wider">CASH FLOW TRACKER</span>
+              </div>
+              <button onClick={() => setCashFlowModalOpen(false)} className="text-neutral-400 hover:text-white cursor-pointer"><X className="w-5 h-5" /></button>
+            </div>
+            <div className="p-8 flex flex-col items-center text-center gap-4">
+              <span className="text-4xl">🔄</span>
+              <p className="text-zinc-400 font-mono text-xs uppercase tracking-wider leading-relaxed">
+                Screenshots à venir prochainement.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* LIGHTBOX OVERLAY */}
       {lightboxIndex !== null && (
         <div className="fixed inset-0 z-[60] bg-black/95 backdrop-blur-lg flex items-center justify-center font-mono select-none">
-          <button
-            onClick={() => setLightboxIndex(null)}
-            className="absolute top-4 right-4 text-neutral-400 hover:text-white z-10 p-2 cursor-pointer"
-          >
-            <X className="w-6 h-6" />
-          </button>
-
+          <button onClick={() => setLightboxIndex(null)} className="absolute top-4 right-4 text-neutral-400 hover:text-white z-10 p-2 cursor-pointer"><X className="w-6 h-6" /></button>
           <div className="absolute top-4 left-1/2 -translate-x-1/2 text-xs text-zinc-500 uppercase tracking-widest z-10 px-3 py-1.5 rounded-sm bg-white/5 border border-white/10 backdrop-blur-sm">
-            {String(lightboxIndex + 1).padStart(2, "0")} / {stitOptimaImages.length}
+            {String(lightboxIndex + 1).padStart(2, "0")} / {lightboxImages.length}
           </div>
-
-          <button
-            onClick={() => setLightboxIndex((i) => (i! - 1 + stitOptimaImages.length) % stitOptimaImages.length)}
-            className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-sm bg-white/5 border border-white/10 hover:border-[#3B82F6]/50 hover:bg-[#3B82F6]/10 flex items-center justify-center text-neutral-300 hover:text-white transition-all z-10 cursor-pointer"
-          >
+          <button onClick={() => setLightboxIndex((i) => (i! - 1 + lightboxImages.length) % lightboxImages.length)}
+            className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-sm bg-white/5 border border-white/10 hover:border-[#3B82F6]/50 hover:bg-[#3B82F6]/10 flex items-center justify-center text-neutral-300 hover:text-white transition-all z-10 cursor-pointer">
             <ChevronLeft className="w-6 h-6" />
           </button>
-
-          <img
-            src={stitOptimaImages[lightboxIndex]}
-            alt={`STIT OPTIMA Screenshot ${lightboxIndex + 1}`}
-            className="max-w-[85vw] max-h-[85vh] object-contain rounded-sm shadow-[0_0_80px_rgba(59,130,246,0.15)]"
-          />
-
-          <button
-            onClick={() => setLightboxIndex((i) => (i! + 1) % stitOptimaImages.length)}
-            className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-sm bg-white/5 border border-white/10 hover:border-[#3B82F6]/50 hover:bg-[#3B82F6]/10 flex items-center justify-center text-neutral-300 hover:text-white transition-all z-10 cursor-pointer"
-          >
+          <img src={lightboxImages[lightboxIndex]} alt={`Screenshot ${lightboxIndex + 1}`}
+            className="max-w-[85vw] max-h-[85vh] object-contain rounded-sm shadow-[0_0_80px_rgba(59,130,246,0.15)]" />
+          <button onClick={() => setLightboxIndex((i) => (i! + 1) % lightboxImages.length)}
+            className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-sm bg-white/5 border border-white/10 hover:border-[#3B82F6]/50 hover:bg-[#3B82F6]/10 flex items-center justify-center text-neutral-300 hover:text-white transition-all z-10 cursor-pointer">
             <ChevronRight className="w-6 h-6" />
           </button>
-
           <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 z-10">
-            {stitOptimaImages.map((_, idx) => (
-              <button
-                key={idx}
-                onClick={() => setLightboxIndex(idx)}
-                className={`w-2 h-2 rounded-full transition-all cursor-pointer ${
-                  idx === lightboxIndex ? "bg-[#3B82F6] w-6" : "bg-white/20 hover:bg-white/40"
-                }`}
-              />
+            {lightboxImages.map((_, idx) => (
+              <button key={idx} onClick={() => setLightboxIndex(idx)}
+                className={`w-2 h-2 rounded-full transition-all cursor-pointer ${idx === lightboxIndex ? "bg-[#3B82F6] w-6" : "bg-white/20 hover:bg-white/40"}`} />
             ))}
           </div>
         </div>

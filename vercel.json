@@ -7,6 +7,9 @@
   "rewrites": [
     { "source": "/api/mes/consult", "destination": "/api/consult" },
     { "source": "/stitoptima", "destination": "/index.html" },
+    { "source": "/stitpro", "destination": "/index.html" },
+    { "source": "/ecommerza", "destination": "/index.html" },
+    { "source": "/cashflow", "destination": "/index.html" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
